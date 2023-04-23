@@ -14,7 +14,7 @@ namespace SmartCalculations.Contracts
         Guid CalculationId { get; }
 
         /// <summary>
-        /// Coffee type.
+        /// Calculation type.
         /// </summary>
         string CalculationType { get; }
     }

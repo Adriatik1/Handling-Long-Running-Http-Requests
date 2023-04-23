@@ -13,8 +13,10 @@ namespace SmartCalculations.MessageComponents.Consumers
         public SmartCalculationConsumer(ILogger<SmartCalculationConsumer> logger,
             IPublishEndpoint publishEndpoint)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _publishEndpoint = publishEndpoint;
+            _logger = logger ?? 
+                throw new ArgumentNullException(nameof(logger));
+            _publishEndpoint = publishEndpoint ??
+                throw new ArgumentNullException(nameof(publishEndpoint));
         }
 
         public async Task Consume(ConsumeContext<ICalculationAccepted> context)
@@ -23,9 +25,11 @@ namespace SmartCalculations.MessageComponents.Consumers
                 $"Starting calculation ({context.Message.CalculationId}) " +
                 $"for calculation id = {context.Message.CalculationId}. UTC: {DateTime.UtcNow}.");
 
-            // Pretend to be doing some long-running tasks
-            await Task.Delay(2000);
+            // Long-running task that takes time
+            await Task.Delay(8000);
 
+
+            // Publish it as completed calculation
             await _publishEndpoint.Publish<ICalculationCompleted>(new
             {
                 CalculationId = context.Message.CalculationId,

@@ -29,7 +29,7 @@ namespace SmartCalculations.MessageComponents.StateMachines
                     {
                         await context.RespondAsync<ICalculationNotFound>(new
                         {
-                            RequestId = context.RequestId.Value
+                            RequestId = context.Message!.CalculationId
                         });
                     }
                 }));

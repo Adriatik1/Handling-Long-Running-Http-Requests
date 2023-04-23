@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  redis-stack-svc:
+    image: redis/redis-stack:latest
+
+  smartsolution.api:
+    image: ${DOCKER_REGISTRY-}smartsolutionapi
+    build:
+      context: .
+      dockerfile: SmartSolution.API/Dockerfile
+  
+  smartsolution.services:
+    image: ${DOCKER_REGISTRY-}smartsolutionservices
+    build:
+      context: .
+      dockerfile: SmartSolution.Services/Dockerfile

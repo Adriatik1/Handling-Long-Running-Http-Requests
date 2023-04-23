@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartCalculations.MessageCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartSolution.Services", "SmartSolution.Services\SmartSolution.Services.csproj", "{BE2503E4-C549-486B-B964-94D7D3590CDC}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5DAD8153-FB23-488E-A197-8F9F0481BDB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BE2503E4-C549-486B-B964-94D7D3590CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE2503E4-C549-486B-B964-94D7D3590CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE2503E4-C549-486B-B964-94D7D3590CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DAD8153-FB23-488E-A197-8F9F0481BDB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DAD8153-FB23-488E-A197-8F9F0481BDB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DAD8153-FB23-488E-A197-8F9F0481BDB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DAD8153-FB23-488E-A197-8F9F0481BDB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SmartSolution.Services": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

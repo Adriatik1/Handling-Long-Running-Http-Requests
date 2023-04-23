@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  redis-stack-svc:
+    container_name: saga_redis
+    restart: always
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+
+  smartsolution.api:
+    container_name: smartsolution_api
+    restart: always
+    depends_on:
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "RabbitMQHostAddress=amqp://guest:guest@rabbitmq:5672"
+    ports:
+      - "7080:80"
+
+  smartsolution.services:
+    container_name: service_console
+    restart: always
+    depends_on:
+        - smartsolution.api
+        - redis-stack-svc
+        - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "RabbitMQHostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "RedisConnectionString=saga_redis:6379"

@@ -11,14 +11,16 @@ namespace SmartSolution.API.Controllers
     public class CalculationsController : Controller
     {
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ILogger<CalculationsController> _logger;
+        private readonly IRequestClient<ICheckCalculation> _checkCalculationRequestClient;
 
         public CalculationsController(
             IPublishEndpoint publishEndpoint,
-            ILogger<CalculationsController> logger)
+            IRequestClient<ICheckCalculation> checkCalculationRequestClient)
         {
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _publishEndpoint = publishEndpoint 
+                ?? throw new ArgumentNullException(nameof(publishEndpoint));
+            _checkCalculationRequestClient = checkCalculationRequestClient
+                ?? throw new ArgumentNullException(nameof(_checkCalculationRequestClient));
         }
 
         [HttpPost("Simple")]
@@ -49,17 +51,21 @@ namespace SmartSolution.API.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> CheckCalculationStatusAsync(Guid calculationId)
         {
-            GenerateCalculationResult result = new()
+            var (status, notFound) = await _checkCalculationRequestClient
+                .GetResponse<ICalculationStatus, ICalculationNotFound>(new
+                {
+                    CalculationId = calculationId
+                });
+            
+            if (status.IsCompletedSuccessfully)
             {
-                CalculationId = Guid.NewGuid()
-            };
+                var response = await status;
+                return Ok(response);
+            }
 
-            await _publishEndpoint.Publish<ICheckCalculation>(new
-            {
-                result.CalculationId
-            });
+            var responseNotFound = await notFound;
 
-            return Ok(result);
+            return Ok(responseNotFound);
         }
     }
 }

@@ -1,8 +1,19 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SmartCalculations.MessageComponents.Consumers;
 using SmartCalculations.MessageComponents.SagaComponents;
 using SmartCalculations.MessageComponents.StateMachines;
+using System.Reflection;
+
+IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+    .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!)
+    .AddJsonFile($"appsettings.json")
+    .AddEnvironmentVariables();
+
+IConfigurationRoot config = configBuilder.Build();
+var redisConnectionString = config.GetValue<string>("RedisConnectionString");
+var rabbitMQHostAddress = config.GetValue<string>("RabbitMQHostAddress");
 
 Host.CreateDefaultBuilder(args)
         .ConfigureServices(services => 
@@ -13,23 +24,17 @@ Host.CreateDefaultBuilder(args)
 
                 configs.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", h =>
-                    {
-                        h.Username("guest");
-                        h.Password("guest");
-                    });
+                    cfg.Host(rabbitMQHostAddress);
 
                     cfg.ConfigureEndpoints(context);
                 });
 
-                // Add Saga State Machines
-                const string redisConfigurationString = "127.0.0.1";
                 // Passing a definition allows us to configure 
                 configs.AddSagaStateMachine<CalculationStateMachine, CalculationState>(typeof(CalculationStateDefinition))
                    // Redis repository to store state instances. By default, redis runs on localhost.
                    .RedisRepository(r =>
                    {
-                       r.DatabaseConfiguration(redisConfigurationString);
+                       r.DatabaseConfiguration(redisConnectionString);
 
                        r.ConcurrencyMode = ConcurrencyMode.Optimistic;
                    });
@@ -39,5 +44,12 @@ Host.CreateDefaultBuilder(args)
         .Build()
         .RunAsync();
 
+ManualResetEvent _quitEvent = new(false);
 
-Console.ReadKey();
+Console.CancelKeyPress += (sender, eArgs) =>
+{
+    _quitEvent.Set();
+    eArgs.Cancel = true;
+};
+
+_quitEvent.WaitOne();
